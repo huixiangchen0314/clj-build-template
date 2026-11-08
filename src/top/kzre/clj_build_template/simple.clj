@@ -1,5 +1,5 @@
 (ns top.kzre.clj-build-template.simple
-  "纯clojure项目"
+  "简单编译模板，不加* 是单步骤，加 * 是从clean开始的完整步骤"
   (:require
     [clojure.string :as str]
     [clojure.tools.build.api :as b]
@@ -43,22 +43,44 @@
               :javac-opts ["-source" java-version
                            "-target" java-version]})))
 
-(defn jar [{:keys
-            [template artifact version
-             compile-java?]
+(defn jar [{:keys [template artifact version]
+            :as _params}]
+  (b/jar {:class-dir (template/class-dir)
+          :jar-file  (template/jar-file template artifact version)}))
+
+(defn jar* [{:keys [compile-java?]
             :as params}]
   (clean)
   (copy-src params)
   (write-pom params)
   (when compile-java? (compile-java params))
-  (b/jar {:class-dir (template/class-dir)
-          :jar-file  (template/jar-file template artifact version)}))
+  (jar params))
 
 (defn install [{:keys [template artifact version]
-                :as params}]
-  (jar params)
+                :as _params}]
   (b/install {:basis    (template/basis)
               :lib       (template/lib template artifact )
               :version   version
               :jar-file  (template/jar-file template artifact version)
               :class-dir (template/class-dir)}))
+
+(defn install* [params]
+  (jar* params)
+  (install* params))
+
+(defn uber [{:keys [template artifact version
+                    main]
+             :as _params}]
+  {:pre [(some? main)]}
+  (b/uber {:class-dir (template/class-dir)
+           :uber-file (template/uberjar-file template artifact version)
+           :basis (template/basis)
+           :main main}))
+
+(defn uber* [{:keys [compile-java?]
+             :as params}]
+  (clean)
+  (copy-src params)
+  (write-pom params)
+  (when compile-java? (compile-java params))
+  (uber params))

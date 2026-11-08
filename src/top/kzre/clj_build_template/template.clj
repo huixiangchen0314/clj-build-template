@@ -22,6 +22,8 @@
 
 (defn jar-file [template artifact version]
   (format "target/%s-%s.jar" (name (lib template artifact)) version))
+(defn uberjar-file [template artifact version]
+  (format "target/%s-%s-standalone.jar" (name (lib template artifact)) version))
 
 (defn github-repo-url [template artifact]
   (str (:github-url template) "/" (name artifact)))
