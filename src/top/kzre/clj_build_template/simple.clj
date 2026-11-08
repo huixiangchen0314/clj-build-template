@@ -13,7 +13,8 @@
   (b/delete {:path (template/dist-dir)}))
 
 (defn- copy-src
-  [{:keys [template src-dirs src-exts]
+  [{:keys [template
+           src-dirs src-exts]
     :as   _params}]
   (let [common {:src-dirs   (or src-dirs (:src-dirs template))
                 :target-dir (template/class-dir)}]
@@ -27,6 +28,13 @@
                    (str "**/*." (first exts))
                    (str "**/*.{" (str/join "," exts) "}"))]
         (b/copy-dir (assoc common :include glob))))))
+
+(defn- copy-resources
+  [{:keys [resource-dirs]
+    :as   _params}]
+  (when (seq resource-dirs)
+    (b/copy-dir {:src-dirs resource-dirs
+                 :target-dir (template/class-dir)})))
 
 (defn- write-pom [{:keys [template artifact version lisences]
                   :as _params}]
@@ -54,6 +62,7 @@
             :as params}]
   (write-pom params)
   (copy-src params)
+  (copy-resources params)
   (b/jar {:class-dir (template/class-dir)
           :jar-file  (template/jar-file template artifact version)}))
 
@@ -85,6 +94,7 @@
   {:pre [(some? main)]}
   (write-pom params)
   (copy-src params)
+  (copy-resources params)
   (b/uber {:class-dir (template/class-dir)
            :uber-file (template/uberjar-file template artifact version)
            :basis (template/basis)

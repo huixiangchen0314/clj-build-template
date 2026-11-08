@@ -8,6 +8,7 @@
 (defn create-template []
   {:java-version "8"
    :src-dirs ["src"]
+   :resource-dirs ["resources"]
    :github-account (github/account)
    :github-url (str "https://github.com" (github/account))
    :group (git/group-id)})
