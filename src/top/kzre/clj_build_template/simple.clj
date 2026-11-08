@@ -1,10 +1,11 @@
 (ns top.kzre.clj-build-template.simple
   "简单编译模板，不加* 是单步骤，加 * 是从clean开始的完整步骤"
   (:require
-    [clojure.string :as str]
-    [clojure.tools.build.api :as b]
-    [clojure.tools.build.tasks.copy :as copy]
-    [top.kzre.clj-build-template.template :as template]))
+   [clojure.string :as str]
+   [clojure.tools.build.api :as b]
+   [clojure.tools.build.tasks.copy :as copy]
+   [top.kzre.clj-build-template.tasks.delete :as delete]
+   [top.kzre.clj-build-template.template :as template]))
 
 (defn create-template []
   ((requiring-resolve 'top.kzre.clj-build-template.template/create-template)))
@@ -23,11 +24,7 @@
       (b/copy-dir (assoc common
                     :ignores (conj copy/default-ignores #".*\.java$")))
       ;; src-exts 有值 -> 白名单，只复制这些后缀
-      (let [exts (mapv #(str/replace % #"^\." "") src-exts)
-            glob (if (= 1 (count exts))
-                   (str "**/*." (first exts))
-                   (str "**/*.{" (str/join "," exts) "}"))]
-        (b/copy-dir (assoc common :include glob))))))
+      (b/copy-dir (assoc common :include (delete/exts->include-glob src-exts))))))
 
 (defn- copy-resources
   [{:keys [resource-dirs]
