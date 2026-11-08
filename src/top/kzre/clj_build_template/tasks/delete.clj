@@ -11,14 +11,20 @@
 
 (defn exts->include-glob
   "Convert a collection of file extensions (with or without a leading dot)
-   into an include glob understood by copy-dir:
-     [\"class\"]         -> \"**/*.class\"
-     [\"clj\" \"cljc\"]  -> \"**/*.{clj,cljc}\""
+   into an include glob understood by copy-dir / delete-dir.
+
+   We use `{**/,}*.<ext>` instead of the more obvious `**/*.<ext>` because
+   Java's glob matcher requires at least one directory component for `**/`,
+   so `**/*.css` would NOT match a root-level `foo.css`. The alternation
+   `{**/,}` covers both root-level files and files in any subdirectory.
+
+     [\"class\"]         -> \"{**/,}*.class\"
+     [\"clj\" \"cljc\"]  -> \"{**/,}*.{clj,cljc}\""
   [exts]
   (let [exts (mapv #(str/replace % #"^\." "") exts)]
     (if (= 1 (count exts))
-      (str "**/*." (first exts))
-      (str "**/*.{" (str/join "," exts) "}"))))
+      (str "{**/,}*." (first exts))
+      (str "{**/,}*.{" (str/join "," exts) "}"))))
 
 (defn- match-paths
   "Match glob to paths under root and return a collection of Path objects."
