@@ -13,7 +13,7 @@
 (defn delete-dir
   "文件夹删除，配置和 copy-dir 类似"
   [params]
-  (assert-required "delete" params [:paths])
+  (assert-required "delete" params [:target-dir])
   ((requiring-resolve 'top.kzre.clj-build-template.tasks.delete/delete) params))
 
 (defn exts->include-glob

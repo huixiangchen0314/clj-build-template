@@ -9,7 +9,7 @@
  :aliases
  {:build
   {:deps {io.github.huixiangchen0314/clj-build-template
-          {:git/sha "5664761b0ee0aad60f587d14d00ccd8b2dc985e7"}}
+          {:git/sha "f78abaaeca7f52ccbba78426306cac5b04c8d8ff"}}
    :ns-default build}
   :run
   {:extra-paths ["target/classes"]
