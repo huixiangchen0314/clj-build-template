@@ -1,0 +1,16 @@
+
+
+.cpcache/
+**/.cache/
+**/cache/
+
+
+#*#
+.idea/
+.clj-kondo/
+kzre-clj-build-template.iml
+
+target/
+.nrepl-port
+
+shaders/out/

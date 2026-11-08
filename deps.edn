@@ -1,0 +1,16 @@
+{:paths ["src" "resources"
+         ;; FOR repl
+         ;"target/classes"
+         ]
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        io.github.clojure/tools.build {:mvn/version "0.9.6"}
+        }
+
+ :aliases
+ {:build
+  {:deps {io.github.clojure/tools.build {:mvn/version "0.9.6"}
+          }
+   :ns-default build}
+  :run
+  {:extra-paths ["target/classes"]
+   :main-opts ["-m" "top.kzre.cljh.tools.build.core"]}}}
