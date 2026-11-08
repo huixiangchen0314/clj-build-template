@@ -46,7 +46,7 @@
 
 (defn compile-clj [{:keys [template src-dirs]}]
   (let [src-dirs (or src-dirs (:src-dirs template))]
-    (b/compile-clj {:basis (template/class-dir)
+    (b/compile-clj {:basis (template/basis)
                     :src-dirs src-dirs
                     :class-dir (template/class-dir)})))
 
