@@ -5,12 +5,11 @@
              :artifact "clj-build-template"
              :version "0.1.0"})
 
-
 (defn clean [_]
       (tpl/clean))
 
 (defn jar [_]
-      (tpl/jar params))
+      (tpl/jar* params))
 
 (defn install [_]
       (tpl/install params))

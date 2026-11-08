@@ -1,11 +1,11 @@
 .PHONY: clean compile test jar uberjar repl
 
-all: clean install
+all: install
 
 clean:
 	clj -T:build clean
 
-jar:
+jar: clean
 	clj -T:build jar
 
 install: jar
