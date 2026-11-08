@@ -58,7 +58,7 @@
 (defn- target-root
   "Resolve :target-dir to an existing File (never creates it)."
   ^File [target-dir]
-  (let [^File root (.toFile ^Path (api/resolve-path target-dir))]
+  (let [^File root (api/resolve-path target-dir)]
     (when-not (.exists root)
       (throw (ex-info (str "target-dir does not exist: " target-dir)
                       {:target-dir target-dir})))
