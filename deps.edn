@@ -8,8 +8,8 @@
 
  :aliases
  {:build
-  {:deps {io.github.clojure/tools.build {:mvn/version "0.9.6"}
-          }
+  {:deps {io.github.huixiangchen0314/clj-build-template
+          {:git/sha "533050cc07a2f9b721054efb65fa99681565cea2"}}
    :ns-default build}
   :run
   {:extra-paths ["target/classes"]
