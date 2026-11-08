@@ -35,25 +35,35 @@
       (template/pom-params template artifact version)
       lisences (assoc-in [:pom-data :licenses] lisences))))
 
-(defn compile-java [{:keys [template src-dirs]}]
-  (let [{:keys [java-version]} template]
-    (b/javac {:src-dirs (or src-dirs (:src-dirs template))
+(defn compile-java [{:keys [template src-dirs java-version]}]
+  (let [java-version (or java-version (:java-version template))
+        src-dirs (or src-dirs (:src-dirs template))]
+    (b/javac {:src-dirs src-dirs
               :class-dir (template/class-dir)
               :basis  (template/basis)
               :javac-opts ["-source" java-version
                            "-target" java-version]})))
+
+(defn compile-clj [{:keys [template src-dirs]}]
+  (let [src-dirs (or src-dirs (:src-dirs template))]
+    (b/compile-clj {:basis (template/class-dir)
+                    :src-dirs src-dirs
+                    :class-dir (template/class-dir)})))
 
 (defn jar [{:keys [template artifact version]
             :as _params}]
   (b/jar {:class-dir (template/class-dir)
           :jar-file  (template/jar-file template artifact version)}))
 
-(defn jar* [{:keys [compile-java?]
+(defn jar* [{:keys [compile-java?
+                    compile-clj?]
             :as params}]
   (clean)
-  (copy-src params)
-  (write-pom params)
   (when compile-java? (compile-java params))
+  (copy-src params)
+  (when compile-clj?
+    (compile-clj params))
+  (write-pom params)
   (jar params))
 
 (defn install [{:keys [template artifact version]
@@ -77,10 +87,15 @@
            :basis (template/basis)
            :main main}))
 
-(defn uber* [{:keys [compile-java?]
+(defn uber* [{:keys [compile-java?
+                     compile-clj?]
+              ;; 默认 AOT
+              :or {compile-clj? true}
              :as params}]
   (clean)
-  (copy-src params)
-  (write-pom params)
   (when compile-java? (compile-java params))
+  (copy-src params)
+  (when compile-clj?
+    (compile-clj params))
+  (write-pom params)
   (uber params))
