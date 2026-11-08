@@ -51,7 +51,8 @@
                     :class-dir (template/class-dir)})))
 
 (defn jar [{:keys [template artifact version]
-            :as _params}]
+            :as params}]
+  (copy-src params)
   (b/jar {:class-dir (template/class-dir)
           :jar-file  (template/jar-file template artifact version)}))
 
@@ -60,7 +61,6 @@
             :as params}]
   (clean)
   (when compile-java? (compile-java params))
-  (copy-src params)
   (when compile-clj?
     (compile-clj params))
   (write-pom params)
@@ -80,8 +80,9 @@
 
 (defn uber [{:keys [template artifact version
                     main]
-             :as _params}]
+             :as params}]
   {:pre [(some? main)]}
+  (copy-src params)
   (b/uber {:class-dir (template/class-dir)
            :uber-file (template/uberjar-file template artifact version)
            :basis (template/basis)
@@ -94,7 +95,6 @@
              :as params}]
   (clean)
   (when compile-java? (compile-java params))
-  (copy-src params)
   (when compile-clj?
     (compile-clj params))
   (write-pom params)
