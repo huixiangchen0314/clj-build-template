@@ -28,7 +28,7 @@
                    (str "**/*.{" (str/join "," exts) "}"))]
         (b/copy-dir (assoc common :include glob))))))
 
-(defn write-pom [{:keys [template artifact version lisences]
+(defn- write-pom [{:keys [template artifact version lisences]
                   :as _params}]
   (b/write-pom
     (cond->
@@ -52,6 +52,7 @@
 
 (defn jar [{:keys [template artifact version]
             :as params}]
+  (write-pom params)
   (copy-src params)
   (b/jar {:class-dir (template/class-dir)
           :jar-file  (template/jar-file template artifact version)}))
@@ -63,7 +64,7 @@
   (when compile-java? (compile-java params))
   (when compile-clj?
     (compile-clj params))
-  (write-pom params)
+
   (jar params))
 
 (defn install [{:keys [template artifact version]
@@ -82,6 +83,7 @@
                     main]
              :as params}]
   {:pre [(some? main)]}
+  (write-pom params)
   (copy-src params)
   (b/uber {:class-dir (template/class-dir)
            :uber-file (template/uberjar-file template artifact version)
@@ -97,5 +99,4 @@
   (when compile-java? (compile-java params))
   (when compile-clj?
     (compile-clj params))
-  (write-pom params)
   (uber params))
